@@ -3,14 +3,15 @@
     <v-row no-gutters>
       <v-col sm="10" class="mx-auto">
         <v-card class="pa5">
-          <v-card-title class="justify-center">Update Posting</v-card-title>
+          <v-card-title class="justify-center">Edit Posting</v-card-title>
           <v-divider></v-divider>
-          <v-form ref="form" @submit.prevent="submitForm" class="pa-5" enctype="multipart/form-data">
+          <v-form ref="form" @submit.prevent="updateForm" class="pa-5" enctype="multipart/form-data">
             <v-text-field label="Title" v-model="posting.title" prepend-icon="mdi-note" ></v-text-field>
             <v-text-field label="Category" v-model="posting.category" prepend-icon="mdi-view-list" ></v-text-field>
             <v-textarea label="Content" v-model="posting.content" prepend-icon="mdi-note-plus" ></v-textarea>
             <v-file-input @change="selectFile" show-size counter multiple label="Select Image"></v-file-input>
-            <v-btn type="submit" class="mt-3" color="primary">Update Posting</v-btn>
+            <v-img :src="`/${posting.image}`" width="120"></v-img>
+            <v-btn type="submit" class="mt-3" color="success">Update Posting</v-btn>
           </v-form>
         </v-card>
       </v-col>
@@ -31,21 +32,27 @@ export default {
         content: "",
         image: ""
       },
-      image: "",
+      new_image: "",
     };
+  },
+  async created() {
+    const response = await API.getPostingByID(this.$route.params.id);
+    this.posting = response;
   },
   methods: {
     selectFile(file) {
-      this.image = file[0];
+      this.new_image = file[0];
     },
-    async submitForm() {
+    async updateForm() {
       const formData = new FormData();
-      formData.append("image", this.image);
+      if (this.new_image != "") {
+        formData.append("image", this.new_image);
+      }
       formData.append("title", this.posting.title);
       formData.append("category", this.posting.category);
       formData.append("content", this.posting.content);
       if (this.$refs.form.validate()) {
-        const response = await API.addPosting(formData);
+        const response = await API.updatePosting(this.$route.params.id, formData);
         this.$router.push({ name: "home", params: { message: response.message } });
       }
     }
