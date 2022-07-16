@@ -32,5 +32,5 @@ import API from "../api";
     async created() {
       this.postings = await API.getAllPostings();
     }
-  }
+  };
 </script>
