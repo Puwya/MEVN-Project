@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row no-gutters>
       <v-col sm="4" class="pa-3" v-for="posting in postings" :key="posting._id">
-        <v-card class="pa-1">
+        <v-card class="pa-1" :to="{ name: 'Posting', params: { id: posting._id } }">
           <v-img height="250" :src="`/${posting.image}`"></v-img>
           <v-btn class="ml-4 mt-3" small outlined color="indigo">
             {{ posting.category }}
